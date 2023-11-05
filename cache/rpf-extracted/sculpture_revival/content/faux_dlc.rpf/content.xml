@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- Faux content.xml. Only uses dataFiles->Item->filename/fileType. -->
+<CDataFileMgr__ContentsOfDataFileXml>
+    <dataFiles>
+        <Item>
+            <filename>mod_sculpture:/%PLATFORM%/sculpture_stream.rpf</filename>
+            <fileType>RPF_FILE</fileType>
+        </Item>
+    </dataFiles>
+</CDataFileMgr__ContentsOfDataFileXml>  

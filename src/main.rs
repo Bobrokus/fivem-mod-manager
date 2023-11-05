@@ -1,30 +1,28 @@
 mod common;
-mod gtautil_adapter;
+mod gtautil;
 
-use std::fs;
-use std::path::PathBuf;
+use std::collections::HashMap;
+use std::fs::OpenOptions;
+use std::io::Read;
+use std::path::Path;
 
 use common::constants::*;
-use common::fivem_mod_package_metadata::FivemModPackageMetadata;
+use common::fivem_mod_package;
+use common::functions::*;
 
-fn ensure_temp_dir_exists() {
-    println!("Ensuring temp dir exists");
-    fs::create_dir_all(TEMP_DIR_PATH).unwrap();
-}
+use crate::common::fivem_mod_package::Package;
 
 fn test_gtautil() {
-    gtautil_adapter::test_util()
-        .expect("Util Test Failed")
-        .wait()
-        .unwrap();
+    dbg!(gtautil_exe_full_path());
 
-    let test_rpf_extracted_path =
-        PathBuf::from(TEMP_DIR_PATH).join(TEST_RPF_EXTRACTED_PATH_RELATIVE_TO_TEMP);
+    let test_mod_metadata =
+        fivem_mod_package::Metadata::from_rpf_archive(Path::new(TEST_RPF_PATH)).unwrap();
 
-    dbg!(FivemModPackageMetadata::from_extracted_rpf(&test_rpf_extracted_path));
+    dbg!(&test_mod_metadata);
 }
 
 fn main() {
-    ensure_temp_dir_exists();
+    ensure_dir(Path::new(EXTRACTED_RPF_CACHE_PATH)).unwrap();
+    ensure_file(Path::new(MODS_TOML_PATH));
     test_gtautil();
 }

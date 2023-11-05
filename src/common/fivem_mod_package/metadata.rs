@@ -9,34 +9,49 @@ use std::path::PathBuf;
 
 use roxmltree::Document;
 use roxmltree::Node;
+use serde::Deserialize;
+use serde::Serialize;
 
-use crate::gtautil_adapter::extract_archive;
+use crate::common::constants::*;
+use crate::common::functions::*;
 
-use super::constants::ASSEMBLY_XML_FILE_NAME;
-use super::constants::TEMP_DIR_PATH;
-use super::functions::*;
-
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Author {
     pub display_name: String,
     pub links: HashMap<String, String>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Version {
     pub major: u8,
     pub minor: u8,
     pub tag: String,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Add {
     pub source_path: PathBuf,
     pub target_path: PathBuf,
 }
 
-#[derive(Debug, Default)]
-pub struct FivemModPackageMetadata {
+pub enum ArchiveType {
+    Rpf0,
+    Rpf2,
+    Rpf3,
+    Rpf4,
+    Rpf6,
+    Rpf7,
+    Rpf8
+}
+
+pub struct Archive {
+    pub path: PathBuf,
+    pub create_if_not_exist: bool,
+    pub r#type: ArchiveType,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct Metadata {
     pub name: String,
     pub version: Version,
     pub author: Author,
@@ -52,9 +67,9 @@ fn find_first_element_in_xml_document<'a>(
         .find(|&x| x.tag_name().name() == element_name);
 }
 
-impl FivemModPackageMetadata {
-    pub fn new() -> FivemModPackageMetadata {
-        FivemModPackageMetadata {
+impl Metadata {
+    pub fn new() -> Metadata {
+        Metadata {
             name: String::new(),
             version: Version {
                 major: 0,
@@ -69,7 +84,7 @@ impl FivemModPackageMetadata {
         }
     }
 
-    pub fn from_assembly_xml(path: &Path) -> io::Result<FivemModPackageMetadata> {
+    pub fn from_assembly_xml(path: &Path) -> io::Result<Metadata> {
         if path.file_name() != Some(OsStr::new("assembly.xml")) {
             return Err(Error::new(
                 ErrorKind::InvalidInput,
@@ -82,7 +97,7 @@ impl FivemModPackageMetadata {
 
         dbg!(&xml_document);
 
-        let mut package = FivemModPackageMetadata::new();
+        let mut package = Metadata::new();
 
         let mut version = Version::default();
 
@@ -158,14 +173,14 @@ impl FivemModPackageMetadata {
 
         for child_element in content_element_children {
             dbg!(child_element);
-            
+
             if !child_element.is_element() {
                 continue;
             }
 
             let source_path = PathBuf::from(child_element.attribute("source").unwrap().to_string());
             let target_path = PathBuf::from(child_element.text().unwrap().to_string());
-            
+
             content.push(Add {
                 source_path,
                 target_path,
@@ -187,8 +202,8 @@ impl FivemModPackageMetadata {
         Ok(dbg!(package))
     }
 
-    pub fn from_extracted_rpf(path: &Path) -> io::Result<FivemModPackageMetadata> {
-        FivemModPackageMetadata::from_assembly_xml(
+    pub fn from_extracted_rpf(path: &Path) -> io::Result<Metadata> {
+        Metadata::from_assembly_xml(
             find_file_in_dir(ASSEMBLY_XML_FILE_NAME, &path)
                 .unwrap()
                 .path()
@@ -196,10 +211,9 @@ impl FivemModPackageMetadata {
         )
     }
 
-    pub fn from_rpf_archive(path: &Path) -> io::Result<FivemModPackageMetadata> {
-        let output_path = Path::new(TEMP_DIR_PATH).join(path.file_name().unwrap());
-        extract_archive(path, &output_path.as_path());
+    pub fn from_rpf_archive(path: &Path) -> io::Result<Metadata> {
+        let output_path = Path::new(EXTRACTED_RPF_CACHE_PATH).join(path.file_stem().unwrap());
 
-        FivemModPackageMetadata::from_extracted_rpf(&output_path.as_path())
+        dbg!(Metadata::from_extracted_rpf(&output_path.as_path()))
     }
 }

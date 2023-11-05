@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<package version="2.1" id="{5002C7EC-4476-46A0-B5A7-6FF7F9F06825}" target="Five">
+<metadata>
+<name>Sculpture Revival</name>
+<version>
+<major>1</major>
+<minor>0</minor>
+<tag>Public</tag>
+</version>
+<author>
+<displayName>CitizenFX Collective</displayName>
+<actionLink>https://fivem.net/</actionLink>
+<web>https://fivem.net/</web>
+</author>
+<description footerLink="" footerLinkTitle="">	
+<![CDATA[Revive the sculpture on the beach.]]>
+</description>
+<largeDescription displayName="" footerLink="" footerLinkTitle="">
+<![CDATA[]]>
+</largeDescription>
+<licence footerLink="" footerLinkTitle="">
+<![CDATA[Content by R*, :shrug:]]></licence>
+</metadata>
+<colors>
+<headerBackground useBlackTextColor="true">$ffffffff</headerBackground>
+<iconBackground>$ffffffff</iconBackground>
+</colors>
+<content>
+<add source="faux_dlc.rpf">update\x64\dlcpacks\sculpture\dlc.rpf</add>
+</content>
+</package>

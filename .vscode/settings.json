@@ -6,6 +6,8 @@
         "createarchive",
         "curr",
         "extractarchive",
-        "gtautil"
-    ]
+        "gtautil",
+        "roxmltree"
+    ],
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
 }
